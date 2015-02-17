@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css">
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.js"></script>
+<script src="//netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script>
+</head>
+  <ul class="nav nav-tabs" id="filetabs">
+    <% files.forEach(function(fileObj) { %>
+      <li><a id="<%= fileObj.id %>-link" href="#<%= fileObj.id %>"><%= fileObj.filename %></a></li>
+    <% }) %>
+  </ul>
+
+  <div class="tab-content">
+
+  <% files.forEach(function(fileObj) { %>
+    <div class="tab-pane" id="<%= fileObj.id %>">
+      <pre>
+<%= fileObj.data %>
+      </pre>
+    </div>
+  <% }) %>
+  </div >
+
+
+<script type="text/javascript">
+$('.nav-tabs a').click(function (e) {
+    $(this).tab('show');
+    window.scrollTo(0,0);
+});
+$(document).ready(function() {
+  if(window.location.hash) {
+    $("a" + window.location.hash + "-link").tab('show');
+  } else {
+    $(".nav-tabs a").first().tab('show');
+
+  }
+});
+</script>
+<script src="/socket.io/socket.io.js"></script>
+<script>
+  // load the socket.io library above, the connect to the server
+  // because the socket.io server is being run on the same server as your 
+  // express instance, you can connect() without any additional information
+  var socket = io.connect(); // TIP: .connect with no args does auto-discovery
+
+  // when 'filechanged' events fire, take our fileobj object and do something with it
+  socket.on('filechanged', function (fileobj) { 
+    console.log(fileobj);
+    //alert('Refreshing... check the console...');
+    // window.location.reload() is a simple way to refresh the page
+    window.location.reload();
+  });
+</script>
+</html>
